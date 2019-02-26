@@ -25,7 +25,7 @@ namespace Server
 
         static void Main(string[] args)
         {
-            /*
+            
             TcpListener server = new TcpListener(IPAddress.Any, 9999);
             try
             {
@@ -35,26 +35,13 @@ namespace Server
                 {
                     TcpClient client = server.AcceptTcpClient();
                     NetworkStream ns = client.GetStream(); //networkstream is used to send/receive messages
-
-                    byte[] hello = new byte[100];   //any message must be serialized (converted to byte array)
-                    hello = Encoding.Default.GetBytes("0");  //conversion string => byte array
-                    Console.WriteLine("Connected");
-                    Console.WriteLine(ReceiveMessage(ns));
+                    MessageToReceive m = new MessageToReceive(Encoding.ASCII.GetBytes(ReceiveMessage(ns)));
+                    m
                 }
             }
             catch (Exception e)
             {
                 Console.Write("Exceptie " + e.GetType().ToString() );
-            }
-            */
-
-            String s = "0Penis~Pula~Edita";
-
-            MessageToReceive m = new MessageToReceive(Encoding.ASCII.GetBytes(s));
-            while (true)
-            {
-                ;
-
             }
         }
     }
