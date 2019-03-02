@@ -20,6 +20,10 @@ namespace Client
                 byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
                 // Send the message to the connected TcpServer.
                 stream.Write(data, 0, data.Length);
+
+                stream.Read();
+
+
             }
         }
     }

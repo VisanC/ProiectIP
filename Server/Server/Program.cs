@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Server
 {
@@ -46,8 +42,8 @@ namespace Server
             {
                 Console.Write("Exceptie " + e.GetType().ToString() );
             }
-            */
-
+            
+            
             String s = "0Penis~Pula~Edita";
 
             MessageToReceive m = new MessageToReceive(Encoding.ASCII.GetBytes(s));
@@ -55,6 +51,12 @@ namespace Server
             {
                 ;
 
+            }
+        */
+            String[] s = { "Penis", "Pula", "Edita" };
+            while (true)
+            {
+                MessageToSend s1 = new MessageToSend(0, s);
             }
         }
     }

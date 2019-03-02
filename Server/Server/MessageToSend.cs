@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Client
+namespace Server
 {
     class MessageToSend {
-
-        public String newMessage;
-
+        
         public MessageToSend(byte type, String[] args)
         {
-
-            newMessage = type.ToString();
+            
+            String newMessage = type.ToString();
             for (int i = 0; i < args.Length; i++)
             {
                 newMessage += args[i];
-                if (i != (args.Length - 1))
+                if ( i != (args.Length - 1))
                 {
                     newMessage += '~';
                 }
