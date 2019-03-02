@@ -6,11 +6,11 @@ namespace Client
 {
     class MessageToSend {
 
-        public String newMessage;
+        public Byte[] msg;
 
         public MessageToSend(byte type, String[] args)
         {
-
+            String newMessage;
             newMessage = type.ToString();
             for (int i = 0; i < args.Length; i++)
             {
@@ -20,7 +20,7 @@ namespace Client
                     newMessage += '~';
                 }
             }
-
+            msg = System.Text.Encoding.ASCII.GetBytes(newMessage);
             Console.WriteLine("Message was packed like this : " + newMessage);
         }
     }

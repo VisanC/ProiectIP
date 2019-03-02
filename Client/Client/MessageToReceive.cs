@@ -8,8 +8,8 @@ namespace Client
 {
     class MessageToReceive
     {
-        byte type;
-        String[] args;
+        public byte type;
+        public String[] args;
 
         public MessageToReceive(Byte[] msg)
         {
