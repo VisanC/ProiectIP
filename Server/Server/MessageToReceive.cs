@@ -8,8 +8,8 @@ namespace Server
 {
     class MessageToReceive
     {
-        byte type;
-        String[] args;
+        public byte type;
+        public String[] args;
 
         public MessageToReceive(Byte[] msg)
         {
@@ -21,10 +21,7 @@ namespace Server
             msg = msg.Skip(1).ToArray(); //skip type
             String temp = Encoding.ASCII.GetString(msg); //make String
             args = temp.Split('~'); //get arguments
-            foreach (String s in args)
-            {
-                Console.WriteLine(s);
-            }
+          
         }
     }
 }
