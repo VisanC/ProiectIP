@@ -32,7 +32,7 @@ namespace Server
         {
             String[] msg = new string[1];
             msg[0] = "EJTIAKOLO?";
-            byte[] biti = Encoding.ASCII.GetBytes(new MessageToSend(0, msg).newMessage);
+            byte[] biti = new MessageToSend(0, msg).msg;
             ns.Write(biti,0,biti.Length);
             return true;
         }
@@ -61,7 +61,8 @@ namespace Server
                 }
                 Console.Write(rez);
                 MessageToSend msgts = new MessageToSend(2, rez);
-                ns.Write(Encoding.ASCII.GetBytes(msgts.newMessage),0,msgts.newMessage.Length*2);
+                ns.Write(Encoding.ASCII.GetBytes(msgts.msg.Length.ToString()), 0, Encoding.ASCII.GetBytes(msgts.msg.Length.ToString()).Length);
+                ns.Write(msgts.msg,0,msgts.msg.Length);
             }
             catch(Exception e)
             {

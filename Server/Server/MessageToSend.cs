@@ -4,21 +4,24 @@ using System.Text;
 
 namespace Server
 {
-    class MessageToSend {
-        
+    class MessageToSend
+    {
+
+        public Byte[] msg;
+
         public MessageToSend(byte type, String[] args)
         {
-            
-            String newMessage = type.ToString();
+            String newMessage;
+            newMessage = type.ToString();
             for (int i = 0; i < args.Length; i++)
             {
                 newMessage += args[i];
-                if ( i != (args.Length - 1))
+                if (i != (args.Length - 1))
                 {
                     newMessage += '~';
                 }
             }
-
+            msg = System.Text.Encoding.ASCII.GetBytes(newMessage);
             Console.WriteLine("Message was packed like this : " + newMessage);
         }
     }
