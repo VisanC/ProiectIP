@@ -9,6 +9,7 @@ namespace Server
         public static TcpClient client;
         public static Byte[] aux;
         public static NetworkStream ns;
+
         public static String ReceiveMessage(NetworkStream stream)
         {
             Byte[] dir = new byte[1024];
@@ -22,7 +23,7 @@ namespace Server
         }
         public static confirmConnection(m)
         {
-            TcpConnction tcp 
+            TcpConnction tcp
             return true;
         }
         public static bool Execute(MessageToReceive m)
