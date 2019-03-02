@@ -10,7 +10,9 @@ namespace Server
 {
     class Program
     {
+        public static TcpClient client;
         public static Byte[] aux;
+        public static NetworkStream ns;
         public static String ReceiveMessage(NetworkStream stream)
         {
             Byte[] dir = new byte[1024];
@@ -22,7 +24,24 @@ namespace Server
 
             return msg;
         }
+        public static confirmConnection(m)
+        {
+            TcpConnction tcp 
+            return true;
+        }
+        public static bool Execute(MessageToReceive m)
+        {
 
+            switch (m.type)
+            {
+                case 0:
+                    return confirmConnection(m)
+                default:
+                    break;
+            }
+
+            return false;
+        }
         static void Main(string[] args)
         {
             
@@ -33,10 +52,18 @@ namespace Server
                 Console.WriteLine("Waiting for Edita!....");
                 while (true)   //we wait for a connection
                 {
-                    TcpClient client = server.AcceptTcpClient();
-                    NetworkStream ns = client.GetStream(); //networkstream is used to send/receive messages
+                    client = server.AcceptTcpClient();
+                    ns = client.GetStream(); //networkstream is used to send/receive messages
                     MessageToReceive m = new MessageToReceive(Encoding.ASCII.GetBytes(ReceiveMessage(ns)));
-                    m
+                    Console.WriteLine(m.args[0]);
+                    if(!Execute(m))
+                    {
+                        Console.Write("Failed to execute operation " + m.type.ToString() + " with args ");
+                        foreach (String s in m.args){
+                            Console.Write(" " + s);
+                        }
+                        Console.WriteLine(" ");
+                    }
                 }
             }
             catch (Exception e)
