@@ -17,6 +17,7 @@ namespace Server
         public static TcpClient client;
         public static Byte[] aux;
         public static NetworkStream ns;
+
         public static String ReceiveMessage(NetworkStream stream)
         {
             Byte[] dir = new byte[1024];
