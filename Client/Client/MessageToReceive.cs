@@ -29,16 +29,5 @@ namespace Client
                 Console.WriteLine(s);
             }
         }
-
-        public bool receive(NetworkStream stream)
-        {
-            byte[] messageSize = new byte[8];
-            stream.Read(messageSize, 0, messageSize.Length);
-            int size = Int32.Parse(System.Text.Encoding.ASCII.GetString(messageSize));
-            byte[] buff = new byte[size];
-            stream.Read(buff, 0, size);
-
-            return true;
-        }
     }
 }

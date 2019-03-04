@@ -7,10 +7,87 @@ namespace Client
 {
     class Program
     {
+
+        public static bool Send(NetworkStream stream, byte type, String[] args)
+        {
+            int size;
+            byte[] data, numberSize;
+
+            MessageToSend m = new MessageToSend(type, args);
+            data = m.msg;
+            size = m.msg.Length;
+            numberSize = BitConverter.GetBytes(size);
+
+            //send size
+            if (stream.CanWrite)
+            {
+                stream.Write(numberSize, 0, sizeof(int));
+                //stream.Flush();
+            }
+
+
+            //send message
+            if (stream.CanWrite)
+            {
+                stream.Write(data, 0, size);
+                //stream.Flush();
+            }
+
+            return true;
+        }
+
+
+        public static MessageToReceive Receive(NetworkStream stream)
+        {
+            int size, bytesRead;
+            byte[] messageSize, buff;
+
+            //TODO error handler for size
+            //do we even need size?
+            messageSize = new byte[8];
+            stream.Read(messageSize, 0, messageSize.Length);
+            size = Int32.Parse(System.Text.Encoding.ASCII.GetString(messageSize));
+
+            buff = new byte[size];
+            do
+            {
+                bytesRead = stream.Read(buff, 0, size);
+
+            } while (bytesRead > 0);
+
+            MessageToReceive newMessage = new MessageToReceive(buff);
+
+            return newMessage;
+        }
+
+
         static void Main(string[] args)
         {
             while (true)
             {
+                int port = 9999;
+                TcpClient client = new TcpClient();
+                client.Connect(System.Net.IPAddress.Parse("192.168.0.106"), port);
+                
+                // Get a client stream for reading and writing.
+                NetworkStream stream = client.GetStream();
+
+                String[] s = { "IONICA", "pulamica" };
+                if (Send(stream, 1, s))
+                {
+                    Console.WriteLine("Sent properly!");
+                }
+                
+                MessageToReceive newMessage = Receive(stream);
+                foreach (String str in newMessage.args)
+                {
+                    Console.Write(str + " ");
+                }
+                Console.WriteLine();
+
+
+                //Old working version
+                /*
                 int port = 9999;
                 TcpClient client = new TcpClient();
                 client.Connect(System.Net.IPAddress.Parse("192.168.0.106"), port);
@@ -37,16 +114,7 @@ namespace Client
                     Console.Write(str + " ");
                 }
                 Console.WriteLine();
-                /*
-                byte[] resp = new byte[50];
-                stream.Read(resp, 0, 20);
-                Console.WriteLine(System.Text.Encoding.ASCII.GetString(resp));
-                String[] s1 = { "merge", "treaba" };
-                MessageToSend m1 = new MessageToSend(1, s1);
-                data = System.Text.Encoding.ASCII.GetBytes(m1.newMessage);
-                stream.Write(data, 0, data.Length);
                 */
-
             }
         }
     }

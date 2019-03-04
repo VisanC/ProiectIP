@@ -18,6 +18,58 @@ namespace Server
         public static Byte[] aux;
         public static NetworkStream ns;
 
+        public static bool Send(NetworkStream stream, byte type, String[] args)
+        {
+            int size;
+            byte[] data, numberSize;
+
+            MessageToSend m = new MessageToSend(type, args);
+            data = m.msg;
+            size = m.msg.Length;
+            numberSize = BitConverter.GetBytes(size);
+
+            //send size
+            if (stream.CanWrite)
+            {
+                stream.Write(numberSize, 0, sizeof(int));
+                //stream.Flush();
+            }
+
+
+            //send message
+            if (stream.CanWrite)
+            {
+                stream.Write(data, 0, size);
+                //stream.Flush();
+            }
+
+            return true;
+        }
+
+
+        public static MessageToReceive Receive(NetworkStream stream)
+        {
+            int size, bytesRead;
+            byte[] messageSize, buff;
+
+            //TODO error handler for size
+            //do we even need size?
+            messageSize = new byte[8];
+            stream.Read(messageSize, 0, messageSize.Length);
+            size = Int32.Parse(System.Text.Encoding.ASCII.GetString(messageSize));
+
+            buff = new byte[size];
+            do
+            {
+                bytesRead = stream.Read(buff, 0, size);
+
+            } while (bytesRead > 0);
+
+            MessageToReceive newMessage = new MessageToReceive(buff);
+
+            return newMessage;
+        }
+
         public static String ReceiveMessage(NetworkStream stream)
         {
             Byte[] dir = new byte[1024];
