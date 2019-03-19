@@ -18,64 +18,25 @@ namespace Server
         public static Byte[] aux;
         public static NetworkStream ns;
 
-        public static bool Send(NetworkStream stream, byte type, String[] args)
+        public static String ReceiveMessage(NetworkStream stream)
         {
-            int size;
-            byte[] data, numberSize;
+            Byte[] dir = new byte[1024];
+            int size = stream.Read(dir, 0, dir.Length);
 
-            MessageToSend m = new MessageToSend(type, args);
-            data = m.msg;
-            size = m.msg.Length;
-            numberSize = System.Text.Encoding.ASCII.GetBytes(size.ToString());
+            Program.aux = new byte[size];
+            Array.Copy(dir, aux, size);
+            String msg = Encoding.ASCII.GetString(aux);
 
-            //send size
-            if (stream.CanWrite)
-            {
-                stream.Write(numberSize, 0, 8);
-                //stream.Flush();
-            }
-
-
-            //send message
-            if (stream.CanWrite)
-            {
-                stream.Write(data, 0, size);
-                //stream.Flush();
-            }
-
-            return true;
+            return msg;
         }
-
-
-        public static MessageToReceive Receive(NetworkStream stream)
-        {
-            int size, bytesRead;
-            byte[] messageSize, buff;
-
-            //TODO error handler for size
-            //do we even need size?
-            messageSize = new byte[8];
-            stream.Read(messageSize, 0, messageSize.Length);
-            size = Int32.Parse(System.Text.Encoding.ASCII.GetString(messageSize));
-
-            buff = new byte[size];
-            do
-            {
-                bytesRead = stream.Read(buff, 0, size);
-
-            } while (bytesRead > 0);
-
-            MessageToReceive newMessage = new MessageToReceive(buff);
-
-            return newMessage;
-        }
-
-        
         public static  bool  confirmConnection()
         {
+<<<<<<< HEAD
+            TcpConnction tcp
+=======
             String[] msg = new string[1];
             msg[0] = "EJTIAKOLO?";
-            byte[] biti = new MessageToSend(0, msg).msg;
+            byte[] biti = Encoding.ASCII.GetBytes(new MessageToSend(0, msg).newMessage);
             ns.Write(biti,0,biti.Length);
             return true;
         }
@@ -104,14 +65,14 @@ namespace Server
                 }
                 Console.Write(rez);
                 MessageToSend msgts = new MessageToSend(2, rez);
-                ns.Write(Encoding.ASCII.GetBytes(msgts.msg.Length.ToString()), 0, Encoding.ASCII.GetBytes(msgts.msg.Length.ToString()).Length);
-                ns.Write(msgts.msg,0,msgts.msg.Length);
+                ns.Write(Encoding.ASCII.GetBytes(msgts.newMessage),0,msgts.newMessage.Length*2);
             }
             catch(Exception e)
             {
                 Console.Write("Exceptie " + e.GetType().ToString());
 
             }
+>>>>>>> 424027e98467ea2496a7d8d729a71c4b7449f90f
             return true;
         }
         public static bool Execute(MessageToReceive m)

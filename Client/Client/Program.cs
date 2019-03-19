@@ -16,12 +16,13 @@ namespace Client
             MessageToSend m = new MessageToSend(type, args);
             data = m.msg;
             size = m.msg.Length;
-            numberSize = BitConverter.GetBytes(size);
+            
+            numberSize = System.Text.Encoding.ASCII.GetBytes(size.ToString());
 
             //send size
             if (stream.CanWrite)
             {
-                stream.Write(numberSize, 0, sizeof(int));
+                stream.Write(numberSize, 0, numberSize.Length);
                 //stream.Flush();
             }
 
@@ -49,11 +50,7 @@ namespace Client
             size = Int32.Parse(System.Text.Encoding.ASCII.GetString(messageSize));
 
             buff = new byte[size];
-            do
-            {
-                bytesRead = stream.Read(buff, 0, size);
-
-            } while (bytesRead > 0);
+            bytesRead = stream.Read(buff, 0, size);
 
             MessageToReceive newMessage = new MessageToReceive(buff);
 
@@ -67,11 +64,12 @@ namespace Client
             {
                 int port = 9999;
                 TcpClient client = new TcpClient();
-                client.Connect(System.Net.IPAddress.Parse("192.168.0.106"), port);
+                Console.WriteLine("Trimite mesaj, pls!");
+                client.Connect(System.Net.IPAddress.Parse("192.168.1.158"), port);
                 
                 // Get a client stream for reading and writing.
                 NetworkStream stream = client.GetStream();
-
+                Console.WriteLine("Trimite mesaj, pls!");
                 String[] s = { "IONICA", "pulamica" };
                 if (Send(stream, 1, s))
                 {
@@ -79,11 +77,6 @@ namespace Client
                 }
                 
                 MessageToReceive newMessage = Receive(stream);
-                foreach (String str in newMessage.args)
-                {
-                    Console.Write(str + " ");
-                }
-                Console.WriteLine();
 
 
                 //Old working version
