@@ -66,12 +66,12 @@ namespace Client
                 TcpClient client = new TcpClient();
                 Console.WriteLine("Trimite mesaj, pls!");
                 client.Connect(System.Net.IPAddress.Parse("192.168.1.158"), port);
-                
+                Console.WriteLine("Connection established successfully!");
+
                 // Get a client stream for reading and writing.
                 NetworkStream stream = client.GetStream();
-                Console.WriteLine("Trimite mesaj, pls!");
-                String[] s = { "IONICA", "pulamica" };
-                if (Send(stream, 1, s))
+                String[] s = { "DANA", "PAROLA", "1", "wtf@yahoo.com" };
+                if (Send(stream, 3, s))
                 {
                     Console.WriteLine("Sent properly!");
                 }

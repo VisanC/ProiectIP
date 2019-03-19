@@ -18,25 +18,65 @@ namespace Server
         public static Byte[] aux;
         public static NetworkStream ns;
 
-        public static String ReceiveMessage(NetworkStream stream)
+        public static bool Send(NetworkStream stream, byte type, String[] args)
         {
-            Byte[] dir = new byte[1024];
-            int size = stream.Read(dir, 0, dir.Length);
+            int size;
+            byte[] data, numberSize;
 
-            Program.aux = new byte[size];
-            Array.Copy(dir, aux, size);
-            String msg = Encoding.ASCII.GetString(aux);
+            MessageToSend m = new MessageToSend(type, args);
+            data = m.msg;
+            size = m.msg.Length;
+            numberSize = System.Text.Encoding.ASCII.GetBytes(size.ToString());
 
-            return msg;
+            //send size
+            if (stream.CanWrite)
+            {
+                stream.Write(numberSize, 0, 8);
+                //stream.Flush();
+            }
+
+
+            //send message
+            if (stream.CanWrite)
+            {
+                stream.Write(data, 0, size);
+                //stream.Flush();
+            }
+
+            return true;
         }
+
+
+        public static MessageToReceive Receive(NetworkStream stream)
+        {
+            int size, bytesRead;
+            byte[] messageSize, buff;
+
+            //TODO error handler for size
+            //do we even need size?
+            messageSize = new byte[2];
+            stream.Read(messageSize, 0, messageSize.Length);
+            Console.WriteLine((System.Text.Encoding.ASCII.GetString(messageSize)));
+            size = Int32.Parse(System.Text.Encoding.ASCII.GetString(messageSize));
+
+            buff = new byte[size];
+            
+            bytesRead = stream.Read(buff, 0, size);
+
+            MessageToReceive newMessage = new MessageToReceive(buff);
+
+            return newMessage;
+        }
+<<<<<<< HEAD
+
+        
+=======
+>>>>>>> f68a7e53e9faf1a9f7aeb46683a870b46a92c51f
         public static  bool  confirmConnection()
         {
-<<<<<<< HEAD
-            TcpConnction tcp
-=======
             String[] msg = new string[1];
             msg[0] = "EJTIAKOLO?";
-            byte[] biti = Encoding.ASCII.GetBytes(new MessageToSend(0, msg).newMessage);
+            byte[] biti = new MessageToSend(0, msg).msg;
             ns.Write(biti,0,biti.Length);
             return true;
         }
@@ -65,14 +105,14 @@ namespace Server
                 }
                 Console.Write(rez);
                 MessageToSend msgts = new MessageToSend(2, rez);
-                ns.Write(Encoding.ASCII.GetBytes(msgts.newMessage),0,msgts.newMessage.Length*2);
+                ns.Write(Encoding.ASCII.GetBytes(msgts.msg.Length.ToString()), 0, Encoding.ASCII.GetBytes(msgts.msg.Length.ToString()).Length);
+                ns.Write(msgts.msg,0,msgts.msg.Length);
             }
             catch(Exception e)
             {
                 Console.Write("Exceptie " + e.GetType().ToString());
 
             }
->>>>>>> 424027e98467ea2496a7d8d729a71c4b7449f90f
             return true;
         }
         public static bool Execute(MessageToReceive m)
@@ -94,8 +134,7 @@ namespace Server
         }
         static void Main(string[] args)
         {
-            conn.ConnectionString = "Server=tcp:proiectipvisi2.database.windows.net,1433;Initial Catalog=proiectip;Persist Security Info=False;User ID=visi;" +
-                "Password=Bazadedate1;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            conn.ConnectionString = "Server=tcp:proiectipvisi2.database.windows.net,1433; Initial Catalog = proiectip; Persist Security Info = False; User ID =visi; Password =Bazadedate1; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30 ;";
             conn.Open();
             TcpListener server = new TcpListener(IPAddress.Any, 9999);
             try
@@ -107,7 +146,7 @@ namespace Server
                     client = server.AcceptTcpClient();
                     ns = client.GetStream(); //networkstream is used to send/receive messages
                     while (true){
-                        MessageToReceive m = new MessageToReceive(Encoding.ASCII.GetBytes(ReceiveMessage(ns)));
+                        MessageToReceive m =Receive(ns);
                         Console.WriteLine("mesaj " +m.type.ToString(),m.args[0]);
                         if (!Execute(m))
                         {

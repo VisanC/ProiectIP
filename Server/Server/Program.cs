@@ -54,23 +54,19 @@ namespace Server
 
             //TODO error handler for size
             //do we even need size?
-            messageSize = new byte[8];
+            messageSize = new byte[2];
             stream.Read(messageSize, 0, messageSize.Length);
+            Console.WriteLine((System.Text.Encoding.ASCII.GetString(messageSize)));
             size = Int32.Parse(System.Text.Encoding.ASCII.GetString(messageSize));
 
             buff = new byte[size];
-            do
-            {
-                bytesRead = stream.Read(buff, 0, size);
-
-            } while (bytesRead > 0);
+            
+            bytesRead = stream.Read(buff, 0, size);
 
             MessageToReceive newMessage = new MessageToReceive(buff);
 
             return newMessage;
         }
-
-        
         public static  bool  confirmConnection()
         {
             String[] msg = new string[1];
@@ -133,8 +129,7 @@ namespace Server
         }
         static void Main(string[] args)
         {
-            conn.ConnectionString = "Server=tcp:proiectipvisi2.database.windows.net,1433;Initial Catalog=proiectip;Persist Security Info=False;User ID=visi;" +
-                "Password=Bazadedate1;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            conn.ConnectionString = "Server=tcp:proiectipvisi2.database.windows.net,1433; Initial Catalog = proiectip; Persist Security Info = False; User ID =visi; Password =Bazadedate1; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30 ;";
             conn.Open();
             TcpListener server = new TcpListener(IPAddress.Any, 9999);
             try
@@ -146,7 +141,7 @@ namespace Server
                     client = server.AcceptTcpClient();
                     ns = client.GetStream(); //networkstream is used to send/receive messages
                     while (true){
-                        MessageToReceive m = new MessageToReceive(Encoding.ASCII.GetBytes(ReceiveMessage(ns)));
+                        MessageToReceive m =Receive(ns);
                         Console.WriteLine("mesaj " +m.type.ToString(),m.args[0]);
                         if (!Execute(m))
                         {
