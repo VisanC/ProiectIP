@@ -10,6 +10,7 @@ namespace Client
 
         public MessageToSend(byte type, String[] args)
         {
+            Console.WriteLine("Preparing message to be sent!");
             String newMessage;
             newMessage = type.ToString();
             for (int i = 0; i < args.Length; i++)
