@@ -57,6 +57,71 @@ namespace Client
             return newMessage;
         }
 
+        public static bool SignupServer(NetworkStream stream, String[] s)
+        {
+            if (s.Length == 4)
+            {
+                Console.WriteLine("Good format");
+                if (Send(stream, 3, s))
+                    Console.WriteLine("Sent properly!Signup");
+                else
+                    Console.WriteLine("Error Sending!");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Bad format");
+                return false;
+            }
+
+        }
+
+        // 48 conn 49 user info 51 new user
+        public static bool CheckConnection(NetworkStream stream)
+        {
+            String[] s = { "" };
+            if (Send(stream, 0, s))
+                return true;
+            else
+                Console.WriteLine("Why you do this?");
+            return false;
+        }
+
+        public static bool Login(NetworkStream stream, String[] s)
+        {
+            if (s.Length == 2)
+            {
+                Console.WriteLine("Good format");
+                if (Send(stream, 1, s))
+                    Console.WriteLine("Sent properly!Signup");
+                else
+                    Console.WriteLine("Error Sending!");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Bad format");
+                return false;
+            }
+        }
+
+        public static bool ListContext(NetworkStream stream, String[] s)
+        {
+            if (s.Length == 2 || s.Length == 3)
+            {
+                Console.WriteLine("Good format");
+                if (Send(stream, 4, s))
+                    Console.WriteLine("Sent properly!Signup");
+                else
+                    Console.WriteLine("Error Sending!");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Bad format");
+                return false;
+            }
+        }
 
         static void Main(string[] args)
         {
@@ -64,21 +129,40 @@ namespace Client
             {
                 int port = 9999;
                 TcpClient client = new TcpClient();
-                Console.WriteLine("Trimite mesaj, pls!");
-                client.Connect(System.Net.IPAddress.Parse("127.0.0.1"), port);
-                
+                Console.WriteLine("Client, waiting for message!");
+                client.Connect(System.Net.IPAddress.Parse("192.168.43.179"), port);
+                       
                 // Get a client stream for reading and writing.
                 NetworkStream stream = client.GetStream();
-                Console.WriteLine("Trimite mesaj, pls!");
-                String[] s = { "IONICA", "pulamica" };
-                if (Send(stream, 1, s))
+                Console.WriteLine("Pregatesc mesajul meu!");
+                String[] s = { "a", "b", "\\A\\penis"};
+
+                /*
+                 * CheckConnection(stream);
+                 * Login(stream, s);
+                 * SignupServer(stream, s);
+                 * ListContext(stream, s);
+                 */
+                FileStream n = new FileStream("temp.txt", FileMode.Create);
+                Console.WriteLine("File on the way");
+                if (stream.CanRead)
+                {
+                    Console.WriteLine("Writing");
+                    stream.CopyTo(n);
+
+                }
+                Console.WriteLine("File sent");
+                
+                /*
+                if (Send(stream, 3, s))
                 {
                     Console.WriteLine("Sent properly!");
                 }
-                
+                */
+
                 MessageToReceive newMessage = Receive(stream);
-
-
+                Console.WriteLine("Exit gracefully!");
+                
                 //Old working version
                 /*
                 int port = 9999;
