@@ -123,6 +123,28 @@ namespace Client
             }
         }
 
+        public static bool ReqFile(NetworkStream ns, String path)
+        {
+            String[] s = { path };
+            String filename = "C:\\Users\\Cosmin\\Desktop\\test.txt";
+            //send path
+            int bytes_sent = -1;
+            Send(ns, 5, s);
+            Byte[] bytes = new Byte[1024];
+            try
+            {
+                using(var fs=new FileStream(filename, FileMode.Create, FileAccess.Write))
+                {
+                    while (bytes_sent != 0)
+                    {
+
+                        //bytes_sent=Int32.Parse(ns.Read())
+                        return true;
+                    }
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             while (true)
@@ -130,35 +152,27 @@ namespace Client
                 int port = 9999;
                 TcpClient client = new TcpClient();
                 Console.WriteLine("Client, waiting for message!");
-                client.Connect(System.Net.IPAddress.Parse("192.168.43.179"), port);
+                client.Connect(System.Net.IPAddress.Parse("127.0.0.1"), port);
                        
                 // Get a client stream for reading and writing.
                 NetworkStream stream = client.GetStream();
                 Console.WriteLine("Pregatesc mesajul meu!");
                 String[] s = { "a", "b", "\\A\\penis"};
 
-                /*
-                 * CheckConnection(stream);
-                 * Login(stream, s);
-                 * SignupServer(stream, s);
-                 * ListContext(stream, s);
-                 */
-                FileStream n = new FileStream("temp.txt", FileMode.Create);
-                Console.WriteLine("File on the way");
-                if (stream.CanRead)
-                {
-                    Console.WriteLine("Writing");
-                    stream.CopyTo(n);
+               
+                  CheckConnection(stream);
+                /** Login(stream, s);
+               * SignupServer(stream, s);
+               * ListContext(stream, s);
+               */
 
-                }
-                Console.WriteLine("File sent");
-                
                 /*
                 if (Send(stream, 3, s))
                 {
                     Console.WriteLine("Sent properly!");
                 }
                 */
+
 
                 MessageToReceive newMessage = Receive(stream);
                 Console.WriteLine("Exit gracefully!");

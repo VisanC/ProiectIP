@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -71,10 +72,43 @@ namespace Server
         {
             String[] msg = new string[1];
             msg[0] = "EJTIAKOLO?";
-            byte[] biti = new MessageToSend(0, msg).msg;
-            ns.Write(biti,0,biti.Length);
+            MessageToSend biti = new MessageToSend(0, msg);
+            ns.Write(Encoding.ASCII.GetBytes(biti.msg.Length.ToString()), 0, Encoding.ASCII.GetBytes(biti.msg.Length.ToString()).Length);
+            ns.Write(biti.msg,0,biti.msg.Length);
             return true;
         }
+
+
+        public static bool SendFile(MessageToReceive m)
+        {
+            int bytes_sent = -1;
+            Byte[] bytes = new byte[1024];
+            try
+            {
+                FileStream fs = new FileStream(m.args[0], FileMode.Open, FileAccess.Read);
+                string[] a = { Path.GetFileName(m.args[0]) };
+                MessageToSend ms = new MessageToSend(5,a );
+                ns.Write(Encoding.ASCII.GetBytes(ms.msg.Length.ToString()), 0, Encoding.ASCII.GetBytes(ms.msg.Length.ToString()).Length);
+                ns.Write(ms.msg, 0, ms.msg.Length);
+                while (bytes_sent != 0)
+                {
+                    bytes_sent = fs.Read(bytes, 0, bytes.Length);
+                    ms.msg = bytes;
+                    ns.Write(Encoding.ASCII.GetBytes(ms.msg.Length.ToString()), 0, Encoding.ASCII.GetBytes(ms.msg.Length.ToString()).Length);
+                    ns.Write(ms.msg, 0, ms.msg.Length);
+                    Receive(ns);
+                }
+                a[0] ="gata";
+                ns.Write(Encoding.ASCII.GetBytes(ms.msg.Length.ToString()), 0, Encoding.ASCII.GetBytes(ms.msg.Length.ToString()).Length);
+                ns.Write(ms.msg, 0, ms.msg.Length);
+            }
+            catch (Exception e)
+            {
+                Console.Write("Exceptie " + e.GetType().ToString());
+            }
+            return true;
+        }
+
 
         public static bool sendUserInfo(MessageToReceive m)
         {
